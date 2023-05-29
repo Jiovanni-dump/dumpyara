@@ -1,0 +1,36 @@
+name: Dump
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  DUMP_URL: "" # Direct url to a recovery zip
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Git
+        uses: actions/checkout@v3
+
+      - name: Create .githubtoken file
+        run: echo "${{ secrets.GIT_TOKEN }}" > .githubtoken
+
+      - name: Create .tgtoken file
+        run: echo "${{ secrets.TELEGRAM_TOKEN }}" > .tgtoken
+
+      - name: Set up environment
+        run: bash setup.sh
+
+      # protobuf-compiler is required for this
+      #- name: Install otadump
+      #  uses: actions-rs/install@v0.1
+      #  with:
+      #    crate: otadump
+      #    version: latest
+
+      - name: Run dumpyara
+        run: bash dumpyara.sh "$DUMP_URL"

@@ -1,0 +1,34 @@
+[Unit]
+Description=Dumpyara service
+After=multi-user.target
+
+[Service]
+# Base settings
+Type=simple
+Restart=always
+RestartSec=10
+
+# Execution parameters
+User=itsvixano
+WorkingDirectory=/home/itsvixano/bot/dumpyara
+ExecStart=/bin/sh -c 'source .venv/bin/activate && python3 main.py'
+
+# Limit damage in case something goes awry
+MemoryLimit=512M
+CPUQuota=200%
+
+# Security
+PrivateTmp=true
+ProtectSystem=full
+NoNewPrivileges=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+PrivateDevices=true
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target
