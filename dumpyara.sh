@@ -255,7 +255,7 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
     curl -s -X PUT -H "Authorization: token ${GIT_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
     git remote add origin https://github.com/$ORG/"${repo,,}".git
     git checkout -b "$branch"
-    find . -size +97M -printf '%P\n' -o -name "*sensetime*" -printf '%P\n' -o -name "*.lic" -printf '%P\n' >| .gitignore
+    find . -size +97M -printf '%P\n' -o -name "*sensetime*" -printf '%P\n' -o -name "*.lic" -printf '%P\n' -o -name "*egvii*" -printf '%P\n' >| .gitignore
     # Compress specific files to bypass git lfs ## TODO: To be done
     allowlist=(
         ## START GENERIC ##
