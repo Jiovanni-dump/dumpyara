@@ -32,5 +32,10 @@ jobs:
       #    crate: otadump
       #    version: latest
 
+      - name: Download "$DUMP_URL"
+        run: aria2c "$DUMP_URL"
+
       - name: Run dumpyara
-        run: bash dumpyara.sh "$DUMP_URL"
+        run: |
+          ZIP_FILE=$(ls *.zip)
+          bash dumpyara.sh "$ZIP_FILE"
