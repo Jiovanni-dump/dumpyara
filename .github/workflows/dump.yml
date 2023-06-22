@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "" # Direct url to a recovery zip
+  DUMP_URL: "https://mva2.androidfilehost.com/dl/hiv8p6VMEXEa0iU3WlnDNg/1687472060/17825722713688278910/XQ-BQ62_61.0.A.15.45_Customized+US.ftf" # Direct url to a recovery zip
 
 jobs:
   dump:
