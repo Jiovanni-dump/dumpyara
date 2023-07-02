@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://pixeldrain.com/api/file/NXaXcCbL?download" # Direct url to a recovery zip
+  DUMP_URL: "https://bigota.d.miui.com/V14.0.7.0.TLUMIXM/miui_ROCKGlobal_V14.0.7.0.TLUMIXM_b16d8555c3_13.0.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
@@ -32,10 +32,15 @@ jobs:
       #    crate: otadump
       #    version: latest
 
-      - name: Download "$DUMP_URL"
-        run: aria2c "$DUMP_URL"
+      #- name: Download "$DUMP_URL"
+      #  run: aria2c "$DUMP_URL"
+
+      #- name: Run dumpyara
+      #  run: |
+      #    ZIP_FILE=$(ls *.zip)
+      #    bash dumpyara.sh "$ZIP_FILE"
 
       - name: Run dumpyara
         run: |
-          ZIP_FILE=$(ls *.zip)
-          bash dumpyara.sh "$ZIP_FILE"
+          bash dumpyara.sh "$DUMP_URL"
+
