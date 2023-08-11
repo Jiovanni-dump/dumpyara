@@ -46,7 +46,7 @@ jobs:
 
       - name: Run dumpyara
         run: |
-          if [[ $DUMP_URL == *"pixeldrain"* ]]; then
+          if [[ $DUMP_URL == *"pixeldrain"* || $DUMP_URL == *"dlcdnets.asus.com"* ]]; then
             wget -O dump.zip "$DUMP_URL"
             bash dumpyara.sh dump.zip
           else
