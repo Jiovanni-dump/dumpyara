@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://dlcdnets.asus.com/pub/ASUS/ZenFone/AI2302/UL-ASUS_AI2302-ASUS-33.0220.0220.43-1.1.4-2307-user.zip?model=Zenfone%2010" # Direct url to a recovery zip
+  DUMP_URL: "https://hugeota.d.miui.com/V14.8.8.4.UMBCNXM/miui_NUWA_V14.0.0.4.UMBCNXM32bf040098_14.0.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
