@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://pixeldrain.com/u/XmJeXHNH" # Direct url to a recovery zip
+  DUMP_URL: "https://hugeota.d.miui.com/V14.0.0.11.UMCCNXM/miui_FUXI_V14.0.0.11.UMCCNXM_1fc98fd237_14.0.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
