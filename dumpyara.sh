@@ -256,6 +256,7 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
     git remote add origin https://github.com/$ORG/"${repo,,}".git
     git checkout -b "$branch"
     find . -size +97M -printf '%P\n' -o -name "*sensetime*" -printf '%P\n' -o -name "*.lic" -printf '%P\n' -o -name "*egvii*" -printf '%P\n' >| .gitignore
+    sed -i 's/[][(){}*^$'"'"'&|<>?\#\!\s]/\\&/g' .gitignore
     # Compress specific files to bypass git lfs ## TODO: To be done
     allowlist=(
         ## START GENERIC ##
