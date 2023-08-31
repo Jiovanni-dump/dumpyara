@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://bigota.d.miui.com/V13.0.2.0.SJXINXM/miui_EXCALIBURINGlobal_V13.0.2.0.SJXINXM_5647f6f4a8_12.0.zip" # Direct url to a recovery zip
+  DUMP_URL: "https://bigota.d.miui.com/V14.0.23.7.31.DEV/miui_ODIN_V14.0.23.7.31.DEV_df62483742_13.0.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
