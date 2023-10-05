@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://bigota.d.miui.com/V14.0.4.0.THGMIXM/miui_SWEETK6AGlobal_V14.0.4.0.THGMIXM_ea2857f460_13.0.zip" # Direct url to a recovery zip
+  DUMP_URL: "https://bigota.d.miui.com/V14.0.6.0.TLIMIXM/miui_TAOYAOGlobal_V14.0.6.0.TLIMIXM_7ec8a720a4_13.0.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
