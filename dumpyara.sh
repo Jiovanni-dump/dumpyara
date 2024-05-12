@@ -259,7 +259,7 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
     find . -size +97M -printf '%P\n' -o -name "*sensetime*" -printf '%P\n' -o -name "*.lic" -printf '%P\n' >| .gitignore
     compressed_files=()
     while IFS= read -r file_path; do
-        if [ -f "$file_path" ]; then
+        if [ -f "$file_path" ] && [[ "$file_path" != *.apex ]] && [[ "$file_path" != *.opex ]]; then
             if [[ "$file_path" == *"$pattern"* ]]; then
                 compressed_file="${file_path}.xz"
                 zstd --ultra -22 --long -M512 -T0 --format=xz "$file_path" -o "$compressed_file"
@@ -282,25 +282,38 @@ done < compressed_files.txt
 EOF
     chmod +x extract_files.sh
     git add --all
-    git commit -asm "Add ${description}"
-    git update-ref -d HEAD
-    git reset system/ vendor/ product/
-    git checkout -b "$branch"
+    git reset HEAD -- system/ system_ext/ vendor/ product/ odm/ my_*/
     git commit -asm "Add extras for ${description}" && "${GITPUSH[@]}"
-    git add vendor/
-    git commit -asm "Add vendor for ${description}" && "${GITPUSH[@]}"
     git add system/system/app/ || git add system/app/
     git commit -asm "Add system app for ${description}" && "${GITPUSH[@]}"
     git add system/system/priv-app/ || git add system/priv-app/
     git commit -asm "Add system priv-app for ${description}" && "${GITPUSH[@]}"
+    git add system/vendor
+    git commit -asm "Add system/vendor for ${description}" && "${GITPUSH[@]}"
     git add system/
     git commit -asm "Add system for ${description}" && "${GITPUSH[@]}"
+    git add system_ext/app/
+    git commit -asm "Add system_ext app for ${description}" && "${GITPUSH[@]}"
+    git add system_ext/priv-app/
+    git commit -asm "Add system_ext priv-app for ${description}" && "${GITPUSH[@]}"
+    git add system_ext/
+    git commit -asm "Add system_ext for ${description}" && "${GITPUSH[@]}"
     git add product/app/
     git commit -asm "Add product app for ${description}" && "${GITPUSH[@]}"
     git add product/priv-app/
     git commit -asm "Add product priv-app for ${description}" && "${GITPUSH[@]}"
     git add product/
     git commit -asm "Add product for ${description}" && "${GITPUSH[@]}"
+    git add vendor/
+    git commit -asm "Add vendor for ${description}" && "${GITPUSH[@]}"
+    git add odm/
+    git commit -asm "Add odm for ${description}" && "${GITPUSH[@]}"
+    if ls -d my_*/ >/dev/null 2>&1; then
+        for oplus_dir in my_*/; do
+            git add "${oplus_dir}"
+            git commit -asm "Add ${oplus_dir} for ${description}" && "${GITPUSH[@]}"
+        done
+    fi
 else
     echo "Dump done locally."
     exit 1
