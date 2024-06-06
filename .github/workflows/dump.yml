@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://rms01.realme.net/sw/RMX3261_11_A.91_20220819191422.zip" # Direct url to a recovery zip
+  DUMP_URL: "https://pixeldrain.com/u/rBC6jxpN" # Direct url to a recovery zip
 
 jobs:
   dump:
