@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://pixeldrain.com/api/file/rBC6jxpN" # Direct url to a recovery zip
+  DUMP_URL: "https://bn.d.miui.com/OS1.0.5.0.UMPMIXM/miui_MOONSTONEGlobal_OS1.0.5.0.UMPMIXM_39a4f11957_14.0.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
