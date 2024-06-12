@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://cdnorg.d.miui.com/V10.2.1.0.MHOMIXM/miui_HMNote3ProGlobal_V10.2.1.0.MHOMIXM_36c0f5ded3_6.0.zip" # Direct url to a recovery zip
+  DUMP_URL: "https://dl.google.com/dl/android/aosp/akita-ota-ud2a.240505.001.w1-1d2e032d.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
