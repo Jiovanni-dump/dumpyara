@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://dl.google.com/dl/android/aosp/akita-ota-ud2a.240505.001.w1-1d2e032d.zip" # Direct url to a recovery zip
+  DUMP_URL: "https://dl.google.com/dl/android/aosp/akita-ota-ap2a.240605.024-2bc858b1.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
