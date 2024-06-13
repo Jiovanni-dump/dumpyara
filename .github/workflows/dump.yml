@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://dl.google.com/dl/android/aosp/akita-ota-ap2a.240605.024-2bc858b1.zip" # Direct url to a recovery zip
+  DUMP_URL: "https://bn.d.miui.com/OS1.0.2.0.ULOCNXM/miui_XAGA_OS1.0.2.0.ULOCNXM_9608f85b60_14.0.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
