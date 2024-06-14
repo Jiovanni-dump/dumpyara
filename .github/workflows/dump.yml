@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://pixeldrain.com/api/file/tCV91pcm" # Direct url to a recovery zip
+  DUMP_URL: "https://cdnorg.d.miui.com/V12.0.2.0.PEFMIXM/miui_HMS2Global_V12.0.2.0.PEFMIXM_668a87d737_9.0.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
