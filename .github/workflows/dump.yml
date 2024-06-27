@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://dl.google.com/dl/android/aosp/husky-ap2a.240605.024.a1-factory-7be03d54.zip" # Direct url to a recovery zip
+  DUMP_URL: "https://android.googleapis.com/packages/ota-api/package/fa048a28779f54755aaaf41ce5432855b8e49bdc.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
