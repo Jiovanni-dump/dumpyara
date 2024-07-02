@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DUMP_URL: "https://bn.d.miui.com/OS1.0.5.0.UMWINXM/miui_SKYINGlobal_OS1.0.5.0.UMWINXM_bc3213035d_14.0.zip" # Direct url to a recovery zip
+  DUMP_URL: "https://gauss-componentotacostmanual-eu.allawnofs.com/remove-390b77af00882c8603a07602a53893b0/component-ota/24/06/21/021d0b5858814537bb7655ce854b0f19.zip" # Direct url to a recovery zip
 
 jobs:
   dump:
