@@ -9,3 +9,5 @@ mkbootimg_tools/
 TWRP-device-tree-generator/
 vmlinux-to-elf/
 working/
+config.py
+__pycache__/
