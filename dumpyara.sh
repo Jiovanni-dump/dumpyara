@@ -42,7 +42,7 @@ if echo "$1" | grep -e '^\(https\?\|ftp\)://.*$' > /dev/null; then
         URL=$1
     fi
     cd "$PROJECT_DIR"/input || exit
-    { type -p aria2c > /dev/null 2>&1 && printf "Downloading File...\n" && aria2c -x16 -j"$(nproc)" "${URL}"; } || { printf "Downloading File...\n" && wget -q --content-disposition --show-progress --progress=bar:force "${URL}" || exit 1; }
+    { type -p aria2c > /dev/null 2>&1 && printf "Downloading File...\n" && aria2c -x16 --check-certificate=false -j"$(nproc)" "${URL}"; } || { printf "Downloading File...\n" && wget -q --content-disposition --show-progress --progress=bar:force "${URL}" || exit 1; }
     if [[ ! -f "$(echo ${URL##*/} | inline-detox)" ]]; then
         URL=$(wget --server-response --spider "${URL}" 2>&1 | awk -F"filename=" '{print $2}')
     fi
@@ -52,7 +52,7 @@ else
     [[ -e "$URL" ]] || { echo "Invalid Input" && exit 1; }
 fi
 
-ORG=AndroidDumps #your GitHub org name
+ORG=Jiovanni-dump #your GitHub org name
 FILE=$(echo ${URL##*/} | inline-detox)
 EXTENSION=$(echo ${URL##*.} | inline-detox)
 UNZIP_DIR=${FILE/.$EXTENSION/}
@@ -70,7 +70,7 @@ fi
 if [[ -d "$PROJECT_DIR/Firmware_extractor" ]]; then
     git -C "$PROJECT_DIR"/Firmware_extractor pull --recurse-submodules
 else
-    git clone -q --recurse-submodules https://github.com/AndroidDumps/Firmware_extractor "$PROJECT_DIR"/Firmware_extractor
+    git clone -q --recurse-submodules https://github.com/Jiovanni-dump/Firmware_extractor "$PROJECT_DIR"/Firmware_extractor
 fi
 if [[ -d "$PROJECT_DIR/mkbootimg_tools" ]]; then
     git -C "$PROJECT_DIR"/mkbootimg_tools pull --recurse-submodules
@@ -248,11 +248,12 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
     curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" 2> /dev/null && echo "Firmware already dumped!" && exit 1
     git init
     if [[ -z "$(git config --get user.email)" ]]; then
-        git config user.email AndroidDumps@github.com
+        git config user.email giovanniricca@duck.com
     fi
     if [[ -z "$(git config --get user.name)" ]]; then
-        git config user.name AndroidDumps
+        git config user.name Jiovanni-bot
     fi
+    git config http.postBuffer 157286400
     curl -s -X POST -H "Authorization: token ${GIT_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/${ORG}/repos" #create new repo
     curl -s -X PUT -H "Authorization: token ${GIT_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
     git remote add origin https://github.com/$ORG/"${repo,,}".git
@@ -321,7 +322,7 @@ fi
 # Telegram channel
 TG_TOKEN=$(< "$PROJECT_DIR"/.tgtoken)
 if [[ -n "$TG_TOKEN" ]]; then
-    CHAT_ID="@android_dumps"
+    CHAT_ID="@jiovanni_dumps"
     commit_head=$(git log --format=format:%H | head -n 1)
     commit_link="https://github.com/$ORG/$repo/commit/$commit_head"
     echo -e "Sending telegram notification"

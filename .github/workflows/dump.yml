@@ -1,0 +1,51 @@
+name: Dump
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: 'URLs'
+        required: true
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          overprovision-lvm: true
+          remove-dotnet: true
+          remove-android: true
+          remove-codeql: true
+          remove-haskell: true
+          remove-docker-images: true
+
+      - name: Set up Git
+        uses: actions/checkout@v3
+
+      - name: Create .githubtoken file
+        run: echo "${{ secrets.GIT_TOKEN }}" > .githubtoken
+
+      #- name: Create .githubssh file
+      #  run: echo "${{ secrets.GIT_SSH }}" > .githubssh
+
+      - name: Create .tgtoken file
+        run: echo "${{ secrets.TELEGRAM_TOKEN }}" > .tgtoken
+
+      - name: Set up environment
+        run: bash setup.sh
+
+      # protobuf-compiler is required for this
+      #- name: Install otadump
+      #  uses: actions-rs/install@v0.1
+      #  with:
+      #    crate: otadump
+      #    version: latest
+
+      - name: Run dumpyara
+        run: |
+          bash dumpyara.sh ${{ inputs.urls }}
