@@ -42,7 +42,7 @@ if echo "$1" | grep -e '^\(https\?\|ftp\)://.*$' > /dev/null; then
         URL=$1
     fi
     cd "$PROJECT_DIR"/input || exit
-    { type -p aria2c > /dev/null 2>&1 && printf "Downloading File...\n" && aria2c -x16 -j"$(nproc)" "${URL}"; } || { printf "Downloading File...\n" && wget -q --content-disposition --show-progress --progress=bar:force "${URL}" || exit 1; }
+    { type -p aria2c > /dev/null 2>&1 && printf "Downloading File...\n" && aria2c -x16 --check-certificate=false -j"$(nproc)" "${URL}"; } || { printf "Downloading File...\n" && wget -q --content-disposition --show-progress --progress=bar:force "${URL}" || exit 1; }
     if [[ ! -f "$(echo ${URL##*/} | inline-detox)" ]]; then
         URL=$(wget --server-response --spider "${URL}" 2>&1 | awk -F"filename=" '{print $2}')
     fi
@@ -52,10 +52,10 @@ else
     [[ -e "$URL" ]] || { echo "Invalid Input" && exit 1; }
 fi
 
-ORG=AndroidDumps #your GitHub org name
-FILE=$(echo ${URL##*/} | inline-detox)
-EXTENSION=$(echo ${URL##*.} | inline-detox)
-UNZIP_DIR=${FILE/.$EXTENSION/}
+ORG=Jiovanni-dump #your GitHub org name
+FILE=$(ls "$PROJECT_DIR"/input/)
+EXTENSION=$(echo "$FILE" | rev | cut -d. -f1 | rev)
+UNZIP_DIR=${FILE%.*}
 PARTITIONS="system systemex system_ext system_other vendor cust odm odm_ext oem factory product modem xrom oppo_product opproduct reserve india my_preload my_odm my_stock my_operator my_country my_product my_company my_engineering my_heytap my_custom my_manifest my_carrier my_region my_bigball my_version special_preload vendor_dlkm odm_dlkm system_dlkm mi_ext"
 
 if [[ -d "$1" ]]; then
@@ -70,7 +70,7 @@ fi
 if [[ -d "$PROJECT_DIR/Firmware_extractor" ]]; then
     git -C "$PROJECT_DIR"/Firmware_extractor pull --recurse-submodules
 else
-    git clone -q --recurse-submodules https://github.com/AndroidDumps/Firmware_extractor "$PROJECT_DIR"/Firmware_extractor
+    git clone -q --recurse-submodules https://github.com/Jiovanni-dump/Firmware_extractor "$PROJECT_DIR"/Firmware_extractor
 fi
 if [[ -d "$PROJECT_DIR/mkbootimg_tools" ]]; then
     git -C "$PROJECT_DIR"/mkbootimg_tools pull --recurse-submodules
@@ -248,31 +248,71 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
     curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" 2> /dev/null && echo "Firmware already dumped!" && exit 1
     git init
     if [[ -z "$(git config --get user.email)" ]]; then
-        git config user.email AndroidDumps@github.com
+        git config user.email giovanniricca@duck.com
     fi
     if [[ -z "$(git config --get user.name)" ]]; then
-        git config user.name AndroidDumps
+        git config user.name Jiovanni-bot
     fi
+    git config http.postBuffer 157286400
     curl -s -X POST -H "Authorization: token ${GIT_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/${ORG}/repos" #create new repo
     curl -s -X PUT -H "Authorization: token ${GIT_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
     git remote add origin https://github.com/$ORG/"${repo,,}".git
     git checkout -b "$branch"
     find . -size +97M -printf '%P\n' -o -name "*sensetime*" -printf '%P\n' -o -name "*.lic" -printf '%P\n' >| .gitignore
     compressed_files=()
-    while IFS= read -r file_path; do
+    tmp_dir=$(mktemp -d)
+    num_cores=$(nproc 2>/dev/null || echo 4)
+
+    compress_file() {
+        local file_path="$1"
+        local job_id="$2"
+        local status_file="${tmp_dir}/${job_id}.status"
+
         if [ -f "$file_path" ] && [[ "$file_path" != *.apex ]] && [[ "$file_path" != *.opex ]]; then
             if [[ "$file_path" == *"$pattern"* ]]; then
-                compressed_file="${file_path}.xz"
-                zstd --ultra -22 --long -M512 -T0 "$file_path" -o "$compressed_file"
-                file_size=$(du -b "$compressed_file" | cut -f1)
+                local compressed_file="${file_path}.xz"
+                zstdmt --ultra -22 --long -M512 "$file_path" -o "$compressed_file"
+                local file_size=$(du -b "$compressed_file" | cut -f1)
                 if [ "$file_size" -le $((99 * 1024 * 1024)) ]; then # 99M
-                    compressed_files+=("$compressed_file")
+                    echo "$compressed_file" > "$status_file"
                 else
                     rm -rf "${compressed_file}"
+                    echo "" > "$status_file"
                 fi
+            else
+                echo "" > "$status_file"
+            fi
+        else
+            echo "" > "$status_file"
+        fi
+    }
+
+    job_id=0
+    running_jobs=0
+
+    while IFS= read -r file_path; do
+        if [ $running_jobs -ge $num_cores ]; then
+            wait -n
+            running_jobs=$((running_jobs - 1))
+        fi
+
+        compress_file "$file_path" "$job_id" &
+        running_jobs=$((running_jobs + 1))
+        job_id=$((job_id + 1))
+    done < .gitignore
+
+    wait
+
+    for i in $(seq 0 $((job_id - 1))); do
+        status_file="${tmp_dir}/${i}.status"
+        if [ -f "$status_file" ]; then
+            compressed_file=$(cat "$status_file")
+            if [ -n "$compressed_file" ]; then
+                compressed_files+=("$compressed_file")
             fi
         fi
-    done < .gitignore
+    done
+    rm -rf "$tmp_dir"
     printf '%s\n' "${compressed_files[@]}" > compressed_files.txt
     cat > extract_files.sh << 'EOF'
 #!/bin/bash
@@ -321,7 +361,7 @@ fi
 # Telegram channel
 TG_TOKEN=$(< "$PROJECT_DIR"/.tgtoken)
 if [[ -n "$TG_TOKEN" ]]; then
-    CHAT_ID="@android_dumps"
+    CHAT_ID="@jiovanni_dumps"
     commit_head=$(git log --format=format:%H | head -n 1)
     commit_link="https://github.com/$ORG/$repo/commit/$commit_head"
     echo -e "Sending telegram notification"
