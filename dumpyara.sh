@@ -240,6 +240,7 @@ fi
 # copy file names
 chown "$(whoami)" ./* -R
 chmod -R u+rwX ./* #ensure final permissions
+"$PROJECT_DIR"/Firmware_extractor/tools/convert_dump.py "$PROJECT_DIR"/working/"${UNZIP_DIR}" # adapt it to py extract utils
 find "$PROJECT_DIR"/working/"${UNZIP_DIR}" -type f -printf '%P\n' | sort | grep -v ".git/" > "$PROJECT_DIR"/working/"${UNZIP_DIR}"/all_files.txt
 
 if [[ -n $GIT_OAUTH_TOKEN ]]; then
@@ -284,12 +285,10 @@ EOF
     git add --all
     git reset HEAD -- system/ system_ext/ vendor/ product/ odm/ my_*/
     git commit -asm "Add extras for ${description}" && "${GITPUSH[@]}"
-    git add system/system/app/ || git add system/app/
+    git add system/app/
     git commit -asm "Add system app for ${description}" && "${GITPUSH[@]}"
-    git add system/system/priv-app/ || git add system/priv-app/
+    git add system/priv-app/
     git commit -asm "Add system priv-app for ${description}" && "${GITPUSH[@]}"
-    git add system/vendor
-    git commit -asm "Add system/vendor for ${description}" && "${GITPUSH[@]}"
     git add system/
     git commit -asm "Add system for ${description}" && "${GITPUSH[@]}"
     git add system_ext/app/
