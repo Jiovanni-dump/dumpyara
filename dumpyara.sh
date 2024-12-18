@@ -264,7 +264,7 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
         if [ -f "$file_path" ] && [[ "$file_path" != *.apex ]] && [[ "$file_path" != *.opex ]]; then
             if [[ "$file_path" == *"$pattern"* ]]; then
                 compressed_file="${file_path}.xz"
-                zstd --ultra -22 --long -M512 -T0 --format=xz "$file_path" -o "$compressed_file"
+                zstd --ultra -22 --long -M512 -T0 "$file_path" -o "$compressed_file"
                 file_size=$(du -b "$compressed_file" | cut -f1)
                 if [ "$file_size" -le $((99 * 1024 * 1024)) ]; then # 99M
                     compressed_files+=("$compressed_file")
