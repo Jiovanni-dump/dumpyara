@@ -45,8 +45,15 @@ if command -v apt > /dev/null 2>&1; then
     # Install required packages in form of a 'for' loop
     for package in unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack arj cabextract device-tree-compiler liblzma-dev python3-pip brotli liblz4-tool axel gawk aria2 detox cpio rename liblz4-dev curl ripgrep; do
         LOGI "Installing '${package}'..."
-        $sudo_cmd apt install  -y "${package}" > /dev/null 2>&1 || \
+        if ! $sudo_cmd apt install  -y "${package}" > /dev/null 2>&1; then
             LOGE "Failed installing '${package}'."
+            case ${package} in
+                liblz4-tool)
+                    $sudo_cmd apt install lz4 -y > /dev/null 2>&1 || \
+                        LOGE "Failed installing 'lz4'."
+                ;;
+            esac
+        fi
     done
 # 'dnf' (Fedora)
 elif command -v dnf > /dev/null 2>&1; then
