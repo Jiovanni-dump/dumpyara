@@ -88,27 +88,24 @@ if echo "${1}" | grep -e '^\(https\?\|ftp\)://.*$' > /dev/null; then
             ;;
         esac
     
-    # Download to the 'working/' directory
-    cd "${PWD}"/working/ || exit
+    # Sanitize file name and path
+    FILENAME="$(basename "${URL}")"
+    SAFE_FILENAME=$(echo "${FILENAME}" | inline-detox)
+    DEST_PATH="${PWD}/working/${SAFE_FILENAME}"
 
     # Start downloading from 'aria2c' and, if failed, 'wget'
     LOGI "Started downloading file from link... ($(date +%R:%S))"
 
-    aria2c -q -s16 -x16 --check-certificate=false "${URL}" || {
-        rm -fv ./input/*
-        wget -q --no-check-certificate "${URL}" || LOGF "Failed to downlaod file. Aborting."
+    aria2c -q -s16 -x16 --check-certificate=false -d "${PWD}/working" -o "${SAFE_FILENAME}" "${URL}" || {
+        rm -fv "${DEST_PATH}"
+        wget -q --no-check-certificate -O "${DEST_PATH}" "${URL}" || \
+            LOGF "Failed to download file. Aborting."
     }
 
     LOGI "Finished downloading file. ($(date +%R:%S))"
 
-    # Check for 'Content-Disposition'
-    if [[ ! -f "$(echo "${URL##*/}" | inline-detox)" ]]; then
-        URL=$(wget --server-response --spider "${URL}" 2>&1 | awk -F"filename=" '{print $2}')
-    fi
-
-    # Sanitize final file
-    detox "${URL##*/}"
-    INPUT=$(echo "${URL##*/}" | inline-detox)
+    # Set 'INPUT' variable for rest of script
+    INPUT="${DEST_PATH}"
 else
     # Otherwise, check if it's a file or directory
     if [[ -e ${1} ]]; then
