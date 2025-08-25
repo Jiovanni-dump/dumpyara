@@ -39,6 +39,11 @@ else
     LOGW "GitHub token not found. Dumping just locally..."
 fi
 
+# Telegram token
+if [[ -f ".tgtoken" ]]; then
+    TG_TOKEN=$(< .tgtoken)
+fi
+
 # Check whether input is a string or a file
 if echo "${1}" | grep -e '^\(https\?\|ftp\)://.*$' > /dev/null; then
     # Set 'URL' to appended string
@@ -563,7 +568,6 @@ else
 fi
 
 # Telegram channel
-TG_TOKEN=$(< "$PWD"/.tgtoken)
 if [[ -n "$TG_TOKEN" ]]; then
     CHAT_ID="@android_dumps"
     commit_head=$(git log --format=format:%H | head -n 1)
