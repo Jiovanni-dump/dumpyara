@@ -463,11 +463,11 @@ description=$(rg -m1 -INoP --no-messages "(?<=^ro.build.description=).*" {system
 [[ -z ${description} ]] && description=$(rg -m1 -INoP --no-messages "(?<=^ro.system.build.description=).*" {system,system/system}/build*.prop | head -n 1)
 [[ -z ${description} ]] && description="$flavor $release $id $incremental $tags"
 
-# Generate dummy device tree
-mkdir -p "${WORKING}/aosp-device-tree"
-LOGI "Generating dummy device tree..."
-uvx aospdtgen . --output "${WORKING}/aosp-device-tree" >> /dev/null 2>&1 || \
-    LOGE "Failed to generate AOSP device tree" && rm -rf "${WORKING}/aosp-device-tree"
+## Generate dummy device tree
+#mkdir -p "${WORKING}/aosp-device-tree"
+#LOGI "Generating dummy device tree..."
+#uvx aospdtgen . --output "${WORKING}/aosp-device-tree" >> /dev/null 2>&1 || \
+#    LOGE "Failed to generate AOSP device tree" && rm -rf "${WORKING}/aosp-device-tree"
 
 is_ab=$(grep -oP "(?<=^ro.build.ab_update=).*" -hs {system,system/system,vendor}/build*.prop | head -n 1)
 [[ -z "${is_ab}" ]] && is_ab="false"
