@@ -494,6 +494,36 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
     git remote add origin https://github.com/$ORG/"${repo,,}".git
     git checkout -b "$branch"
     find . -size +97M -printf '%P\n' -o -name "*sensetime*" -printf '%P\n' -o -name "*.lic" -printf '%P\n' >| .gitignore
+    # Compress large files in parallel
+    compress_file() {
+        local file_path="$1"
+        local max_size=$((99 * 1024 * 1024)) # 99MB
+
+        if [ -f "$file_path" ]; then
+            local compressed_file="${file_path}.zst"
+            zstdmt --ultra -22 --long -M512 "$file_path" -o "$compressed_file"
+            if [ $(stat -c%s "$compressed_file") -le $max_size ]; then
+                echo "$compressed_file"
+            else
+                rm -f "$compressed_file"
+            fi
+        fi
+    }
+
+    export -f compress_file
+
+    # Process files in parallel and collect compressed filenames
+    cat .gitignore | xargs -P $(nproc) -I {} bash -c 'compress_file "{}"' > compressed_files.txt
+
+    # Create extraction script
+    cat > extract_files.sh << 'EOF'
+#!/bin/bash
+
+while IFS= read -r file; do
+    unzstd "$file"
+done < compressed_files.txt
+EOF
+    chmod +x extract_files.sh
     git add --all
     git commit -asm "Add ${description}"
     git update-ref -d HEAD
