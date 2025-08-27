@@ -573,16 +573,17 @@ if [[ -n "$TG_TOKEN" ]]; then
     commit_head=$(git log --format=format:%H | head -n 1)
     commit_link="https://github.com/$ORG/$repo/commit/$commit_head"
     echo -e "Sending telegram notification"
-    printf "<b>Brand: %s</b>" "$brand" >| "$PWD"/working/tg.html
-    {
-        printf "\n<b>Device: %s</b>" "$codename"
-        printf "\n<b>Version:</b> %s" "$release"
-        printf "\n<b>Fingerprint:</b> %s" "$fingerprint"
-        printf "\n<b>GitHub:</b>"
-        printf "\n<a href=\"%s\">Commit</a>" "$commit_link"
-        printf "\n<a href=\"https://github.com/%s/%s/tree/%s/\">%s</a>" "$ORG" "$repo" "$branch" "$codename"
-    } >> "$PWD"/working/tg.html
-    TEXT=$(< "$PWD"/working/tg.html)
+
+    TEXT=$(cat <<EOF
+<b>Brand: $brand</b>
+<b>Device: $codename</b>
+<b>Version:</b> $release
+<b>Fingerprint:</b> $fingerprint
+<b>GitHub:</b>
+<a href="$commit_link">Commit</a>
+<a href="https://github.com/$ORG/$repo/tree/$branch/">$codename</a>
+EOF
+)
+
     curl -s "https://api.telegram.org/bot${TG_TOKEN}/sendmessage" --data "text=${TEXT}&chat_id=${CHAT_ID}&parse_mode=HTML&disable_web_page_preview=True" > /dev/null
-    rm -rf "$PWD"/working/tg.html
 fi
