@@ -95,7 +95,7 @@ if echo "${1}" | grep -e '^\(https\?\|ftp\)://.*$' > /dev/null; then
     
     # Sanitize file name and path
     FILENAME="$(basename "${URL}")"
-    SAFE_FILENAME=$(echo "${FILENAME}" | inline-detox)
+    SAFE_FILENAME=$(echo "${FILENAME}" | sed 's/%[0-9A-Fa-f][0-9A-Fa-f]/_/g' | inline-detox)
     DEST_PATH="${PWD}/working/${SAFE_FILENAME}"
 
     # Start downloading from 'aria2c' and, if failed, 'wget'
@@ -122,7 +122,7 @@ fi
 
 ORG=AndroidDumps #your GitHub org name
 EXTENSION=$(echo "${INPUT##*.}" | inline-detox)
-UNZIP_DIR=$(basename ${INPUT/.$EXTENSION/})
+UNZIP_DIR=$(basename "${INPUT/.$EXTENSION/}" | sed 's/%[0-9A-Fa-f][0-9A-Fa-f]/_/g' | inline-detox)
 WORKING=${PWD}/working/${UNZIP_DIR}
 
 # Delete previously dumped project
