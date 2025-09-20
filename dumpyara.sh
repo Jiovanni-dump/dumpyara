@@ -123,7 +123,7 @@ fi
 ORG=AndroidDumps #your GitHub org name
 EXTENSION=$(echo "${INPUT##*.}" | inline-detox)
 UNZIP_DIR=$(basename "${INPUT/.$EXTENSION/}" | sed 's/%[0-9A-Fa-f][0-9A-Fa-f]/_/g' | inline-detox)
-WORKING=${PWD}/working/${UNZIP_DIR}
+WORKING=${PWD}/working/${UNZIP_DIR}_
 
 # Delete previously dumped project
 if [[ -d "${WORKING}" ]]; then
@@ -184,7 +184,7 @@ for partition in "${PARTITIONS[@]}"; do
 
                 # Only abort if we're at the first occourence
                 if [[ "${partition}" == "${PARTITIONS[0]}" ]]; then
-                    LOGF "Aborting dumping considering it's a crucial partition."
+                    LOGE "Aborting dumping considering it's a crucial partition."
                 fi
             }
         }
@@ -519,6 +519,8 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
 
     # Process files in parallel and collect compressed filenames
     cat .gitignore | xargs -P $(nproc) -I {} bash -c 'compress_file "{}"' > compressed_files.txt
+    echo "fs_config_dirs" >> .gitignore
+    echo "fs_config_files" >> .gitignore
 
     # Create extraction script
     cat > extract_files.sh << 'EOF'
