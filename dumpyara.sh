@@ -519,6 +519,7 @@ if [[ -n $GIT_OAUTH_TOKEN ]]; then
 
     # Process files in parallel and collect compressed filenames
     cat .gitignore | xargs -P $(nproc) -I {} bash -c 'compress_file "{}"' > compressed_files.txt
+    echo "fs_config_dirs" >> .gitignore
 
     # Create extraction script
     cat > extract_files.sh << 'EOF'
