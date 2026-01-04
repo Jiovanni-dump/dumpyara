@@ -184,7 +184,7 @@ for partition in "${PARTITIONS[@]}"; do
 
                 # Only abort if we're at the first occourence
                 if [[ "${partition}" == "${PARTITIONS[0]}" ]]; then
-                    LOGF "Aborting dumping considering it's a crucial partition."
+                    LOGE "Aborting dumping considering it's a crucial partition."
                 fi
             }
         }
